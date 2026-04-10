@@ -1,9 +1,9 @@
 package models;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class HistoricoDoStatus {
-
     private EnumStatus status;
     private String comentario;
     private String responsavel;
@@ -16,11 +16,10 @@ public class HistoricoDoStatus {
         this.data = LocalDateTime.now();
     }
 
-    public void exibir(){
-        System.out.println("Data:" + data);
-        System.out.println("Status:" + status);
-        System.out.println("Comentario:" + comentario);
-        System.out.println("Responsavel:" + responsavel);
-        System.out.println("============================");
+    public void exibir() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        System.out.println("[" + data.format(formatter) + "] Status: " + status);
+        System.out.println("Responsável: " + responsavel + " | Comentário: " + comentario);
+        System.out.println("-------------------------------------------------");
     }
 }
