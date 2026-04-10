@@ -2,65 +2,46 @@ package Services;
 
 import models.EnumStatus;
 import models.Solicitacao;
-
 import java.util.ArrayList;
+import java.util.List;
 
 public class ServicoSolicitacoes {
+    private List<Solicitacao> lista = new ArrayList<>();
+    private int proximoId = 1;
 
-    private ArrayList<Solicitacao> lista;
-    public int id = 1;
-
-    public ServicoSolicitacoes(){
-        lista = new ArrayList<>();
-    }
-
-    public void criar(String categoria, String descricao, String bairro, boolean anonimo, String nome, int prioridade){
-        if(categoria.isEmpty() || bairro.isEmpty()){
-            System.out.println("Campos obrigatorios");
+    public void criar(String categoria, String descricao, String bairro, boolean anonimo, String nome, int prioridade) {
+        // Clean Code: Guard Clauses (Falha rápido para evitar aninhamento de IFs)
+        if (categoria.isEmpty() || bairro.isEmpty() || descricao.length() < 5) {
+            System.out.println("Erro: Verifique os campos obrigatórios e o tamanho da descrição.");
             return;
         }
 
-        if (descricao.length() < 5) {
-            System.out.println("Descrição muito curta!");
-            return;
-        }
-
-        Solicitacao solicitacao = new Solicitacao(id++, categoria, descricao, bairro, nome, anonimo, prioridade);
-            lista.add(solicitacao);
-
-            System.out.println("Uma Solicitação foi criada com protocolo: " + solicitacao.getProtocolo());
+        Solicitacao nova = new Solicitacao(proximoId++, categoria, descricao, bairro, nome, anonimo, prioridade);
+        lista.add(nova);
+        System.out.println("Solicitação criada com sucesso! Protocolo: " + nova.getProtocolo());
     }
 
-    public Solicitacao buscarProtocolo(int protocolo){
-        for (Solicitacao solicitacao : lista){
-            if(solicitacao.getProtocolo() == protocolo){
-                return solicitacao;
-            }
+    public Solicitacao buscarPorProtocolo(int protocolo) {
+        for (Solicitacao s : lista) {
+            if (s.getProtocolo() == protocolo) return s;
         }
         return null;
     }
 
-    public void listarTodos(){
-        for(Solicitacao solicitacao : lista){
-            solicitacao.exibir();
+    public void listarTodas() {
+        if (lista.isEmpty()) {
+            System.out.println("Nenhuma solicitação cadastrada.");
+            return;
         }
+        for (Solicitacao s : lista) s.exibir();
     }
 
-    public void atualizarStatus(int protocolo, EnumStatus status, String comentario, String responsavel) {
-        Solicitacao solicitacao = buscarProtocolo(protocolo);
-
-        if (solicitacao != null) {
-            solicitacao.atualizarStatus(status, comentario, responsavel);
+    public void atualizarStatus(int protocolo, EnumStatus novoStatus, String comentario, String responsavel) {
+        Solicitacao s = buscarPorProtocolo(protocolo);
+        if (s != null) {
+            s.atualizarStatus(novoStatus, comentario, responsavel);
         } else {
-            System.out.println("Protocolo/id não foi encontrado!");
-        }
-    }
-
-    public void listarPorBairro(String bairro) {
-        for (Solicitacao solicitacao : lista) {
-            if (solicitacao.getBairro().equalsIgnoreCase(bairro)) {
-                solicitacao.exibir();
-            }
+            System.out.println("Erro: Protocolo não encontrado.");
         }
     }
 }
